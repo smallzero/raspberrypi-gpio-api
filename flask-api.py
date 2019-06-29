@@ -72,17 +72,13 @@ def unauthorized():
             'error': 'Auth requerided'}
     return jsonify(data)
 
-VALID_BCM_PIN_NUMBERS = [17, 18, 27, 22, 23, 24, 25, 4]
+VALID_BCM_PIN_NUMBERS = [2, 3, 4, 5]
 VALID_HIGH_VALUES = [1, '1', 'HIGH']
 VALID_LOW_VALUES = [0, '0', 'LOW']
-PIN_NAMES = {'17': 'IN1',
-             '18': 'IN2',
-             '27': 'IN3',
-             '22': 'IN4',
-             '23': 'IN5',
-             '24': 'IN6',
-             '25': 'IN7',
-             '4': 'IN8'}
+PIN_NAMES = {'2': 'IN1',
+             '3': 'IN2',
+             '4': 'IN3',
+             '5': 'IN4'}
 
 GPIO.setmode(GPIO.BCM)
 
