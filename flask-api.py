@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from flask import Flask, jsonify, request
-from flask.ext.login import LoginManager, UserMixin, login_required
+from flask_login import LoginManager, UserMixin, login_required
 from itsdangerous import URLSafeTimedSerializer
 
 import RPi.GPIO as GPIO
@@ -10,7 +10,7 @@ from decorators import crossdomain
 app = Flask(__name__)
 app.debug = True
 
-app.secret_key = 'my_#$%^&_security_&*(4_key'
+app.secret_key = 'B1smill@h2019'
 
 #Login_serializer used to encryt and decrypt the cookie token for the remember
 #me option of flask-login
