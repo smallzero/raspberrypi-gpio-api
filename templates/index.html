@@ -22,7 +22,7 @@
         <div class="panel panel-default">
             <div class="panel-heading"><strong>Hidro Pump</strong></div>
             <div class="panel-body">
-		    <button type="button" class="btn btn-danger btn-lg" id="btnPowerHidroPump" value="poweroff">Power Off - Hidro Pum</button>
+		    <button type="button" class="btn btn-danger btn-lg" id="btnPowerHidroPump" value="poweroff">Power already Off - Hidro Pump</button>
             </div>
         </div>
     </div>
@@ -34,7 +34,7 @@
 	$('#btnPowerHidroPump').click(function(){
 		if($('#btnPowerHidroPump').val()=='poweroff'){
 			$('#btnPowerHidroPump').val('poweron');
-			$('#btnPowerHidroPump').html('Power On - Hidro Pump');
+			$('#btnPowerHidroPump').html('Power already On - Hidro Pump');
 			$('#btnPowerHidroPump').removeClass('btn-danger');
 			$('#btnPowerHidroPump').addClass('btn-success');
 			$.post('/api/v1/gpio/5/', { value: "on" });
@@ -42,7 +42,7 @@
 
 		} else {
 			$('#btnPowerHidroPump').val('poweroff');
-			$('#btnPowerHidroPump').html('Power Off - Hidro Pump');
+			$('#btnPowerHidroPump').html('Power already Off - Hidro Pump');
 			$('#btnPowerHidroPump').removeClass('btn-success');
 			$('#btnPowerHidroPump').addClass('btn-danger');
 			$.post('/api/v1/gpio/5/', {value:"off"});
