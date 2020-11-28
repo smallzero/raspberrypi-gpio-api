@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_login import LoginManager, UserMixin, login_required
 from itsdangerous import URLSafeTimedSerializer
 
@@ -72,19 +72,23 @@ def unauthorized():
             'error': 'Auth requerided'}
     return jsonify(data)
 
-VALID_BCM_PIN_NUMBERS = [2, 3, 4, 5]
+VALID_BCM_PIN_NUMBERS = [2, 3, 4, 5, 21]
 VALID_HIGH_VALUES = [1, '1', 'HIGH']
 VALID_LOW_VALUES = [0, '0', 'LOW']
 PIN_NAMES = {'2': 'IN1',
              '3': 'IN2',
              '4': 'IN3',
-             '5': 'IN4'}
+             '5': 'IN4',
+             '21': 'IN5'}
+
+ON = 0
+OFF = 1
+
 
 GPIO.setmode(GPIO.BCM)
 
 for pin in VALID_BCM_PIN_NUMBERS:
     GPIO.setup(pin, GPIO.OUT)
-
 
 def pin_status(pin_number):
     if pin_number in VALID_BCM_PIN_NUMBERS:
@@ -117,6 +121,14 @@ def pin_update(pin_number, value):
     return data
 
 
+#default high
+for pin in VALID_BCM_PIN_NUMBERS:
+    pin_update(pin, OFF)
+
+@app.route("/")
+def index():
+    return render_template('index.html')
+
 @app.route("/api/v1/ping/", methods=['GET'])
 @crossdomain(origin='*')
 def api_status():
@@ -130,7 +142,7 @@ def api_status():
 
 @app.route("/api/v1/gpio/<pin_number>/", methods=['POST', 'GET'])
 @crossdomain(origin='*')
-@login_required
+#@login_required
 def gpio_pin(pin_number):
     pin_number = int(pin_number)
     if request.method == 'GET':
@@ -138,10 +150,10 @@ def gpio_pin(pin_number):
 
     elif request.method == 'POST':
         value = request.values['value']
-        if value in VALID_HIGH_VALUES:
-            data = pin_update(pin_number, 1)
-        elif value in VALID_LOW_VALUES:
-            data = pin_update(pin_number, 0)
+        if value in "on":
+            data = pin_update(pin_number, ON)
+        elif value in "off":
+            data = pin_update(pin_number, OFF)
         else:
             data = {'status': 'ERROR',
                     'error': 'Invalid value.'}
@@ -164,7 +176,7 @@ def gpio_status():
 def gpio_all_high():
     data_list = []
     for pin in VALID_BCM_PIN_NUMBERS:
-        data_list.append(pin_update(pin, 1))
+        data_list.append(pin_update(pin, ON))
 
     data = {'data': data_list}
     return jsonify(data)
@@ -175,11 +187,32 @@ def gpio_all_high():
 def gpio_all_low():
     data_list = []
     for pin in VALID_BCM_PIN_NUMBERS:
-        data_list.append(pin_update(pin, 0))
+        data_list.append(pin_update(pin, OFF))
 
     data = {'data': data_list}
     return jsonify(data)
 
+@app.route("/api/v1/gpio/all-on/", methods=['POST'])
+@crossdomain(origin='*')
+def gpio_all_on():
+    data_list = []
+    for pin in VALID_BCM_PIN_NUMBERS:
+        print("cek :", pin)
+        data_list.append(pin_update(pin, ON))
+
+    data = {'data': data_list}
+    return jsonify(data)
+
+
+@app.route("/api/v1/gpio/all-off/", methods=['POST'])
+@crossdomain(origin='*')
+def gpio_all_off():
+    data_list = []
+    for pin in VALID_BCM_PIN_NUMBERS:
+        data_list.append(pin_update(pin, OFF))
+
+    data = {'data': data_list}
+    return jsonify(data)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80, debug=True)

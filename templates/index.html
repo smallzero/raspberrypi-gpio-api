@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<header>
+    <title>Mamat Raspberry PI - Hydroponic Management System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</header>
+
+<body>
+    <div class="container-fluid">
+        <div align="center">
+            <h1>Hydroponic Management System</h1>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Hidro Pump</strong></div>
+            <div class="panel-body">
+		    <button type="button" class="btn btn-danger btn-lg" id="btnPowerHidroPump" value="poweroff">Power Off - Hidro Pum</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+    var backend = ".";
+    $(document).ready(function () {
+	$('#btnPowerHidroPump').click(function(){
+		if($('#btnPowerHidroPump').val()=='poweroff'){
+			$('#btnPowerHidroPump').val('poweron');
+			$('#btnPowerHidroPump').html('Power On - Hidro Pump');
+			$('#btnPowerHidroPump').removeClass('btn-danger');
+			$('#btnPowerHidroPump').addClass('btn-success');
+			$.post('/api/v1/gpio/5/', { value: "on" });
+			$.post('/api/v1/gpio/3/', { value: "on" });
+
+		} else {
+			$('#btnPowerHidroPump').val('poweroff');
+			$('#btnPowerHidroPump').html('Power Off - Hidro Pump');
+			$('#btnPowerHidroPump').removeClass('btn-success');
+			$('#btnPowerHidroPump').addClass('btn-danger');
+			$.post('/api/v1/gpio/5/', {value:"off"});
+			$.post('/api/v1/gpio/3/', {value:"off"});
+		}
+	});
+
+
+        var switchData = ["1","2","3","4"];    
+        //load first
+        $.get(backend+"/api/v1/gpio/status", function(resp, status){
+            //console.log("request :"+backend+"/api/v1/gpio/status");
+            var data = resp.data;
+            if(data){
+                if(data.length==4){
+                    for(var i=0; i < data.length; i++){
+                        if(data[i].value==0){
+                            $('#s'+switchData[i]).prop('checked', true);
+                        } else {
+                            $('#s'+switchData[i]).prop('checked', false);
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    function btnChecked(btnSwitch){
+        $(document).ready(function(){
+            console.log("cek value:" +$('#s1').val());
+        });
+    }
+</script>
+
+</html>
